@@ -1,0 +1,4 @@
+<service
+    android:name="org.onlyroblox.visualizer.ScreenCaptureService"
+    android:exported="false"
+    android:foregroundServiceType="mediaProjection" />
