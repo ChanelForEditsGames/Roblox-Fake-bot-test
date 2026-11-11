@@ -1,0 +1,54 @@
+
+name: Build Only Roblox Visualizer APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Configurar Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Instalar dependencias
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            git zip unzip build-essential \
+            autoconf libtool pkg-config \
+            zlib1g-dev libncurses5-dev \
+            libffi-dev libssl-dev
+
+      - name: Instalar Buildozer
+        run: |
+          python -m pip install --upgrade pip setuptools
+          python -m pip install "Cython==0.29.36" "buildozer==1.5.0"
+
+      - name: Compilar APK
+        run: buildozer android debug
+        env:
+          BUILDOZER_WARN_ON_ROOT: "0"
+
+      - name: Guardar APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Only-Roblox-Visualizer-APK
+          path: bin/*.apk
+          if-no-files-found: error
+          
